@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class TargetUI : MonoBehaviour
+public class TargetVisual : MonoBehaviour
 {
     Target target;
     private SpriteRenderer spriteRenderer;
+    [SerializeField] private TextMeshPro textMeshPro;
 
+    [Header("After Failure")]
     [SerializeField] private GameObject dyingTargetPrefab;
+    
 
     private Color startColor;
     private Color endColor;
@@ -20,18 +24,20 @@ public class TargetUI : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         SetupColor();
 
+
+        textMeshPro.text = target.Number.ToString();
+
         target.onTargetFailure -= Target_onTargetFailure;
         target.onTargetFailure += Target_onTargetFailure;
     }
 
     private void Target_onTargetFailure(Target target)
     {
-        SummonDyingTarget(target);
+        SummonDyingTarget();
     }
-    private void SummonDyingTarget(Target target)
+    private void SummonDyingTarget()
     {
         Instantiate(dyingTargetPrefab, transform.position , Quaternion.identity);
-        Debug.Log("Dying");
     }
 
 
@@ -43,15 +49,16 @@ public class TargetUI : MonoBehaviour
         endColor.a = 1;
 
         spriteRenderer.color = startColor;
+
     }
 
     private void Update()
     {
-            float t = Mathf.Min(target.TimeRemaining / target.MaxTime , 1f);
-            t = Mathf.Sin(t * Mathf.PI * 0.5f);
-            Color newColor = Color.Lerp(startColor, endColor, t);
+        float t = Mathf.Min(target.TimeRemaining / target.MaxTime, 1f);
+        t = Util.SinLerp(t);
+        Color newColor = Color.Lerp(startColor, endColor, t);
 
-            spriteRenderer.color = newColor;
+        spriteRenderer.color = newColor;
     }
 
 }

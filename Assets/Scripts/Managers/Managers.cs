@@ -13,9 +13,9 @@ public class Managers : MonoBehaviour
     private TargetManager target = new TargetManager();
     private VectorManager vector = new VectorManager();
     private InputManager input = new InputManager();
-    public TargetManager Target { get { return Instance.target; } }
-    public VectorManager Vector { get { return Instance.vector; } }
-    public InputManager Input { get { return Instance.input; } }
+    public static TargetManager Target { get { return Instance.target; } }
+    public static VectorManager Vector { get { return Instance.vector; } }
+    public static InputManager Input { get { return Instance.input; } }
     #endregion
 
     private static void Setup() {

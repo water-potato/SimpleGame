@@ -5,46 +5,68 @@ using UnityEngine;
 
 public class GameBuilder : MonoBehaviour
 {
-    [SerializeField] private GameObject targetPrefab;
+    [Header("Target Prefabs")]
+    [SerializeField] private GameObject normalTargetPrefab;
+    [SerializeField] private GameObject linearTargetPrefab;
     private int currentNumber;
-    private float targetTime = 2f;
+    
+    [SerializeField] private float targetLivingTime = 2f;
 
     [Header("Generate")]
-    [SerializeField] private float maxGenerateTime;
-    [SerializeField] private float minGenerateTime = .3f;
+    [SerializeField] private float maxGenperiod;
+    [SerializeField] private float minGenperiod = .5f;
 
+    [Header("ReadOnly")]
     [SerializeField] private float generateTime;
-
     [SerializeField] private int successCount;
-    private int failureCount;
-    private int maxFailure;
+
+    private float periodTime = 5f;
+
 
     [Header("Game Over")]
     [SerializeField] private bool canOver;
+    private int maxFailureCount;
+    private int failureCount;
     private bool isOver;
 
-    private float testTimer;
+    private float genTimer;
+    private float pTimer;
     // Start is called before the first frame update
     void Start()
     {
         ResetGameBuilder();
 
+
+
     }
 
     void Update()
     {
+        // Draw Border
+        Debug.DrawLine(Managers.Vector.MinVector, new Vector2(Managers.Vector.MinX, Managers.Vector.MaxY) , Color.red);
+        Debug.DrawLine(Managers.Vector.MinVector, new Vector2(Managers.Vector.MaxX, Managers.Vector.MinY), Color.red);
+        Debug.DrawLine(Managers.Vector.MaxVector, new Vector2(Managers.Vector.MinX, Managers.Vector.MaxY), Color.red);
+        Debug.DrawLine(Managers.Vector.MaxVector, new Vector2(Managers.Vector.MaxX, Managers.Vector.MinY), Color.red);
+
         if (canOver && isOver)
             return;
 
-        testTimer += Time.deltaTime;
+        genTimer += Time.deltaTime;
+        pTimer += Time.deltaTime;
 
-        if(testTimer > generateTime) 
+        if (genTimer > generateTime) 
         {
             GenerateTarget();
-            testTimer = 0;
+            genTimer = 0;
         }
 
-        if(Managers.Instance.Input.CheckTargetForPC(out Target target))
+        if(pTimer >= periodTime)
+        {
+            generateTime = Mathf.Max(generateTime - 0.2f, minGenperiod);
+            pTimer = 0f;
+        }
+
+        if(Managers.Input.CheckTargetForPC(out Target target))
         {
             target.Success();
         }
@@ -55,34 +77,27 @@ public class GameBuilder : MonoBehaviour
         isOver = false;
         currentNumber = 1;
         
-        generateTime = maxGenerateTime;
-        Target.onAnyTargetFailure += onTargetFailure;
-        Target.onAnyTargetSuccess += onTargetSuccess;
+        generateTime = maxGenperiod;
+        Target.onAnyTargetFailure += onAnyTargetFailure;
+        Target.onAnyTargetSuccess += onAnyTargetSuccess;
 
     }
 
     private void GenerateTarget()
     {
-        Managers.Instance.Target.GenerateTarget(currentNumber++, targetTime, targetPrefab ,GetRandomPosition());
+        Managers.Target.GenerateTarget(currentNumber++, targetLivingTime, normalTargetPrefab ,GetRandomPosition());
 
     }
 
-    private void onTargetSuccess(Target target)
+    private void onAnyTargetSuccess(Target target)
     {
-        int lessTimeLimit = 5;
         successCount++;
-        if(successCount >= lessTimeLimit)
-        {
-            successCount = 0;
-            generateTime = Mathf.Max(generateTime - 0.1f, minGenerateTime);
-        }
-
     }
-    private void onTargetFailure(Target target)
+    private void onAnyTargetFailure(Target target)
     {
         failureCount++;
 
-        if(canOver && failureCount >= maxFailure)
+        if(canOver && failureCount >= maxFailureCount)
         {
             GameOver();
         }
@@ -91,11 +106,11 @@ public class GameBuilder : MonoBehaviour
     private void GameOver()
     {
         Debug.Log("Game Over");
-        Target.onAnyTargetFailure -= onTargetFailure;
-        Target.onAnyTargetSuccess -= onTargetSuccess;
+        Target.onAnyTargetFailure -= onAnyTargetFailure;
+        Target.onAnyTargetSuccess -= onAnyTargetSuccess;
 
         isOver = true;
     }
 
-    private Vector2 GetRandomPosition() => Managers.Instance.Vector.GetRandomPositionInViewPort();
+    private Vector2 GetRandomPosition() => Managers.Vector.GetRandomPositionInViewPort();
 }

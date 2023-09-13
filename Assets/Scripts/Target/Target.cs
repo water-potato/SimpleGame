@@ -5,12 +5,11 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Target : MonoBehaviour
+public abstract class Target : MonoBehaviour
 {
-    private int number;
-    private float timeRemaining;
-    private float maxTime;
-    [SerializeField] private TextMeshPro textMeshPro;
+    protected int number;
+    protected float timeRemaining;
+    protected float maxTime;
 
     #region Events
     public delegate void TargetFailureHandler(Target target);
@@ -22,27 +21,7 @@ public class Target : MonoBehaviour
     public event TargetFailureHandler onTargetFailure;
     public event TargetSuccessHandler onTargetSuccess;
     #endregion
-    public void Setup(int number , float maxTimer , Color? color = null)
-    {
-        this.number = number;
-        maxTime = maxTimer;
-        timeRemaining = maxTime;
-        textMeshPro.text = number.ToString();
-
-        if(color.HasValue)
-        {
-            GetComponent<SpriteRenderer>().color = color.Value;
-        }
-    }
-
-    private void Update()
-    {
-        timeRemaining -= Time.deltaTime;
-        if (timeRemaining <= 0)
-        {
-            Failure();
-        }
-    }
+    public abstract void Setup(int number, float maxTime);
 
     public void Failure()
     {
@@ -61,5 +40,7 @@ public class Target : MonoBehaviour
     public int Number { get { return number; } }
     public float TimeRemaining => timeRemaining;
     public float MaxTime => maxTime;
+
+
 
 }
