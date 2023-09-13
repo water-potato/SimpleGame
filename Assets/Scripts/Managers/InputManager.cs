@@ -40,4 +40,9 @@ public class InputManager
 
         return false;
     }
+
+    public bool CheckTouch()
+    {
+        return Input.GetMouseButton(0);
+    }
 }

@@ -5,11 +5,11 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class Target : MonoBehaviour
+public class Target : MonoBehaviour
 {
-    protected int number;
-    protected float timeRemaining;
-    protected float maxTime;
+    private int number;
+    private float timeRemaining;
+    private float maxTime;
 
     #region Events
     public delegate void TargetFailureHandler(Target target);
@@ -21,8 +21,35 @@ public abstract class Target : MonoBehaviour
     public event TargetFailureHandler onTargetFailure;
     public event TargetSuccessHandler onTargetSuccess;
     #endregion
-    public abstract void Setup(int number, float maxTime);
 
+    private Movement[] movements;
+    public void Setup(int number, float maxTime)
+    {
+        this.number = number;
+        this.maxTime = maxTime;
+        timeRemaining = this.maxTime;
+
+        movements = GetComponents<Movement>();
+
+    }
+
+    private void Update()
+    {
+        timeRemaining -= Time.deltaTime;
+        if (timeRemaining <= 0)
+        {
+            Failure();
+        }
+
+        if(movements.Length > 0)
+        {
+            foreach(Movement movement in movements)
+            {
+                movement.Run();
+            }
+        }
+
+    }
     public void Failure()
     {
         onAnyTargetFailure?.Invoke(this);
@@ -37,7 +64,7 @@ public abstract class Target : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public int Number { get { return number; } }
+    public int Number => number;
     public float TimeRemaining => timeRemaining;
     public float MaxTime => maxTime;
 

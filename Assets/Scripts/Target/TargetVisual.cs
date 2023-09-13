@@ -25,8 +25,6 @@ public class TargetVisual : MonoBehaviour
         SetupColor();
 
 
-        textMeshPro.text = target.Number.ToString();
-
         target.onTargetFailure -= Target_onTargetFailure;
         target.onTargetFailure += Target_onTargetFailure;
     }
@@ -54,6 +52,8 @@ public class TargetVisual : MonoBehaviour
 
     private void Update()
     {
+        textMeshPro.text = target.Number.ToString();
+
         float t = Mathf.Min(target.TimeRemaining / target.MaxTime, 1f);
         t = Util.SinLerp(t);
         Color newColor = Color.Lerp(startColor, endColor, t);

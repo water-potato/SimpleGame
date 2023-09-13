@@ -185,9 +185,9 @@ GameObject:
   - component: {fileID: 9092189558517766764}
   - component: {fileID: -3396497797062744363}
   - component: {fileID: 753102407559401488}
-  - component: {fileID: 7675147766295287820}
+  - component: {fileID: 2404038175485031166}
   m_Layer: 0
-  m_Name: LinearTarget
+  m_Name: WaveTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,7 +303,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &7675147766295287820
+--- !u!114 &2404038175485031166
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -312,6 +312,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 5075749694526133539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d60f371f2dce23245a30ffca4c76cfdc, type: 3}
+  m_Script: {fileID: 11500000, guid: 0911859f36af8754f9ad1c6bf2646b28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

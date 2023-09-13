@@ -1,13 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIHandler : MonoBehaviour
 {
     public static UIHandler Instance { get; private set;}
 
+
+    [Header("Must Assign")]
     [SerializeField]
-    private GameObject failEffect;
+    private BackGround backGround;
+
+    [SerializeField]
+    private GameObject gameOverUI;
+
+    [SerializeField]
+    private GameObject TitleUI;
 
     private void Awake()
     {
@@ -16,15 +25,42 @@ public class UIHandler : MonoBehaviour
             Destroy(gameObject);
         }
         Instance = this;
+
     }
+
 
     private void Start()
     {
-        Target.onAnyTargetFailure += OnAnyTargetFailure;
+        GameBuilder.Instance.onTitle += GameBuilder_OnTitle;
+        GameBuilder.Instance.onFailure += GameBuilder_OnFailure;
+        GameBuilder.Instance.onSuccess += GameBuilder_OnSuccess;
+        GameBuilder.Instance.onGameOver += GameBuilder_OnGameOver;
+        GameBuilder.Instance.onGameStart += GameBuilder_OnGameStart;
     }
 
-    private void OnAnyTargetFailure(Target target)
+    private void GameBuilder_OnTitle()
     {
-        failEffect.SetActive(true);
+        TitleUI.SetActive(true);
+        backGround.ResetColor();
+        gameOverUI.SetActive(false);
     }
+    private void GameBuilder_OnGameStart()
+    {
+        TitleUI.SetActive(false);
+        backGround.Init();
+        gameOverUI.SetActive(false);
+    }
+    private void GameBuilder_OnFailure(Target target)
+    {
+        backGround.OnFailure();
+    }
+    private void GameBuilder_OnSuccess(Target target)
+    {
+        backGround.OnSuccess();
+    }
+    private void GameBuilder_OnGameOver()
+    {
+        gameOverUI.SetActive(true);
+    }
+
 }

@@ -185,9 +185,10 @@ GameObject:
   - component: {fileID: 9092189558517766764}
   - component: {fileID: -3396497797062744363}
   - component: {fileID: 753102407559401488}
-  - component: {fileID: 7675147766295287820}
+  - component: {fileID: 1094519544121690859}
+  - component: {fileID: -4937304157807117026}
   m_Layer: 0
-  m_Name: LinearTarget
+  m_Name: ScaleLinearTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -303,7 +304,19 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &7675147766295287820
+--- !u!114 &1094519544121690859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5075749694526133539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f949a4a2dbe114d810255fb82a333f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-4937304157807117026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
