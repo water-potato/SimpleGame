@@ -91,7 +91,7 @@ public class GameBuilder : MonoBehaviour
     }
     private void Start()
     {
-        State = GameState.Stop;
+        GoToTitle();
     }
     void Update()
     {

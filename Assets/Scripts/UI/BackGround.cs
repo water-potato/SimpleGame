@@ -31,10 +31,8 @@ public class BackGround : MonoBehaviour
     private void ChangeColor()
     {
         spriteRenderer.color = Color.Lerp(startColor, endColor, Mathf.Min(t, 1f));
-        Debug.Log(endColor + " ," + spriteRenderer.color);
         if(t > 1f)
         {
-            Debug.Log(transform + "Gameover");
             GameBuilder.Instance.GameOver();
         }
     }

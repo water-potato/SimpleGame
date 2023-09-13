@@ -26,16 +26,16 @@ public class UIHandler : MonoBehaviour
         }
         Instance = this;
 
-    }
-
-
-    private void Start()
-    {
         GameBuilder.Instance.onTitle += GameBuilder_OnTitle;
         GameBuilder.Instance.onFailure += GameBuilder_OnFailure;
         GameBuilder.Instance.onSuccess += GameBuilder_OnSuccess;
         GameBuilder.Instance.onGameOver += GameBuilder_OnGameOver;
         GameBuilder.Instance.onGameStart += GameBuilder_OnGameStart;
+    }
+
+
+    private void Start()
+    {
     }
 
     private void GameBuilder_OnTitle()
