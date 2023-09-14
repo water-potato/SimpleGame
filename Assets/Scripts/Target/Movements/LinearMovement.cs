@@ -13,7 +13,7 @@ public class LinearMovement : Movement
     private void Start()
     {
         movementVector = Random.insideUnitCircle.normalized;
-        speed = Random.Range(2f, 10f);
+        speed = Random.Range(2f, 8f);
     }
     public override void Run()
     {

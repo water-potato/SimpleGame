@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InputManager 
 {
-    private float sensitive = .1f; 
+    private float sensitive = .3f; 
 
     public bool CheckTargetForMobile(out Target target)
     {
@@ -12,8 +12,8 @@ public class InputManager
 
         if (Input.touchCount == 0)
             return false;
-        if (Input.GetTouch(0).phase != TouchPhase.Began)
-            return false;
+
+        // touch 모두 가져와서 루프 돌리기
         Vector2 touchPoint = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
         if (Physics2D.OverlapCircle(touchPoint, sensitive)
             .TryGetComponent<Target>(out target))

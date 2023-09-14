@@ -111,13 +111,13 @@ public class GameBuilder : MonoBehaviour
         // ½Ã°£  Áö³ª¸é ÁÖ±â Âª¾ÆÁü
         if(pTimer >= periodTime)
         {
-            generateTime = Mathf.Max(generateTime - 0.2f, minGenperiod);
+            generateTime = Mathf.Max(generateTime - 0.1f, minGenperiod);
             pTimer = 0f;
         }
 
         CheckForState();
 
-        if (Managers.Input.CheckTargetForPC(out Target target))
+        if (Managers.Input.CheckTargetForMobile(out Target target))
         {
             target.Success();
         }

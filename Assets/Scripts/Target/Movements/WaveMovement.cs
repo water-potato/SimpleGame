@@ -7,7 +7,7 @@ public class WaveMovement : Movement
     float xsign;
     float ysign;
     bool isVertical;
-    float speed = 5f;
+    float speed = 4f;
     float timer;
     Vector3 movementVector;
     private void Start()
