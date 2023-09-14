@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIHandler : MonoBehaviour
 {
@@ -18,6 +19,15 @@ public class UIHandler : MonoBehaviour
     [SerializeField]
     private GameObject TitleUI;
 
+    [SerializeField]
+    private GameObject gameClearUI;
+
+    [SerializeField]
+    private Image[] specialImages;
+
+    Color transparentColor = new Color(1, 1, 1, 0);
+    Color specialEndColor = new Color(1, 1, 1, .1f);
+
     private void Awake()
     {
         if(Instance != null)
@@ -31,24 +41,40 @@ public class UIHandler : MonoBehaviour
         GameBuilder.Instance.onSuccess += GameBuilder_OnSuccess;
         GameBuilder.Instance.onGameOver += GameBuilder_OnGameOver;
         GameBuilder.Instance.onGameStart += GameBuilder_OnGameStart;
+        GameBuilder.Instance.onGameClear += GameBuilder_OnGameClear;
     }
 
-
-    private void Start()
+    private void Update()
     {
+        switch (GameBuilder.Instance.CurrentNumber)
+        {
+            case 40:
+                StartCoroutine(SetSpeicialImage(specialImages[0]));
+                break;
+            case 80:
+                StartCoroutine(SetSpeicialImage(specialImages[1]));
+                break;
+            case 140:
+                StartCoroutine(SetSpeicialImage(specialImages[2]));
+                break;
+            case 170:
+                StartCoroutine(SetSpeicialImage(specialImages[3]));
+                break;
+            default:
+                break;
+        }
     }
 
     private void GameBuilder_OnTitle()
     {
+        ResetUIs();
         TitleUI.SetActive(true);
-        backGround.ResetColor();
-        gameOverUI.SetActive(false);
+
     }
     private void GameBuilder_OnGameStart()
     {
-        TitleUI.SetActive(false);
+        ResetUIs();
         backGround.Init();
-        gameOverUI.SetActive(false);
     }
     private void GameBuilder_OnFailure(Target target)
     {
@@ -60,7 +86,44 @@ public class UIHandler : MonoBehaviour
     }
     private void GameBuilder_OnGameOver()
     {
+        ResetUIs();
+        backGround.EndColor();
         gameOverUI.SetActive(true);
     }
+    private void GameBuilder_OnGameClear()
+    {
+        ResetUIs();
+        gameClearUI.SetActive(true);
+    }
 
+    private void ResetUIs()
+    {
+
+        backGround.ResetColor();
+        gameOverUI.SetActive(false);
+        gameClearUI.SetActive(false);
+        backGround.ResetColor();
+        foreach (var image in specialImages)
+        {
+            image.color = transparentColor;
+        }
+    }
+
+    IEnumerator SetSpeicialImage(Image image)
+    {
+        float t = 0;
+        int maxTimeHalf = 50;
+        for(int i=0; i < maxTimeHalf; i++)
+        {
+            t = Mathf.Clamp01((float) i / maxTimeHalf);
+            image.color = Color.Lerp(transparentColor, specialEndColor, t);
+            yield return new WaitForSeconds(0.01f);
+        }
+        for (int i = maxTimeHalf; i > 0; i--)
+        {
+            t = Mathf.Clamp01((float)i / maxTimeHalf);
+            image.color = Color.Lerp(transparentColor, specialEndColor, t);
+            yield return new WaitForSeconds(0.01f);
+        }
+    }
 }

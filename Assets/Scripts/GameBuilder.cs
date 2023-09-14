@@ -1,17 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameBuilder : MonoBehaviour
 {
     public static GameBuilder Instance { get; private set; }
 
-
     enum GameState
     {
         Stop,
         Easy,
         Normal,
-        Hard
+        Hard,
+        Clear
     }
 
 
@@ -24,6 +26,7 @@ public class GameBuilder : MonoBehaviour
             {
                 case GameState.Stop:
                     isStop = true;
+                    prefabs = null;
                     break;
                 case GameState.Easy:
                     isStop = false;
@@ -34,6 +37,10 @@ public class GameBuilder : MonoBehaviour
                     break;
                 case GameState.Hard:
                     prefabs = hardTargetPrefabs;
+                    break;
+                case GameState.Clear:
+                    isStop = true;
+                    prefabs = null;
                     break;
             }
             _state = value;
@@ -62,14 +69,13 @@ public class GameBuilder : MonoBehaviour
 
     [Header("ReadOnly")]
     [SerializeField] private float generateTime;
-    [SerializeField] private int successCount;
-    [SerializeField]
-    private GameState _state;
+    [SerializeField] private GameState _state;
 
 
     private float genTimer;
     private float pTimer;
     private float sTimer;
+
     // Start is called before the first frame update
 
 
@@ -79,6 +85,7 @@ public class GameBuilder : MonoBehaviour
     public event Action onGameOver;
     public event Action onGameStart;
     public event Action onTitle;
+    public event Action onGameClear;
     #endregion
 
     private void Awake()
@@ -99,28 +106,47 @@ public class GameBuilder : MonoBehaviour
         if (canOver && isStop)
             return;
 
+
         genTimer += Time.deltaTime;
         pTimer += Time.deltaTime;
         sTimer += Time.deltaTime;
         // Á¨ Å¸ÀÓ µÇ¸é Á¨
-        if (genTimer > generateTime) 
+
+
+        if (currentNumber < 200)
         {
-            GenerateTarget();
-            genTimer = 0;
+            if (genTimer > generateTime)
+            {
+                GenerateTarget();
+                genTimer = 0;
+            }
+            // ½Ã°£  Áö³ª¸é ÁÖ±â Âª¾ÆÁü
+            if (pTimer >= periodTime)
+            {
+                generateTime = Mathf.Max(generateTime - 0.125f, minGenperiod);
+                pTimer = 0f;
+            }
         }
-        // ½Ã°£  Áö³ª¸é ÁÖ±â Âª¾ÆÁü
-        if(pTimer >= periodTime)
+        else if(Managers.Target.ActiveTargets.Count == 0)
         {
-            generateTime = Mathf.Max(generateTime - 0.1f, minGenperiod);
-            pTimer = 0f;
+            GameClear();
         }
 
         CheckForState();
 
-        if (Managers.Input.CheckTargetForMobile(out Target target))
+#if UNITY_EDITOR
+        if(Managers.Input.CheckTargetForPC(out Target target))
         {
             target.Success();
         }
+#elif UNITY_ANDROID
+
+        if (Managers.Input.CheckTargetForMobile(out List<Target> targets))
+        {
+            foreach(Target target in targets)
+                target.Success();
+        }
+#endif
     }
 
     public void GameStart()
@@ -148,7 +174,7 @@ public class GameBuilder : MonoBehaviour
 
     private void GenerateTarget()
     {
-        if (prefabs.Length>0)
+        if (prefabs != null)
         {
             int index = UnityEngine.Random.Range(0, prefabs.Length);
             Managers.Target.GenerateTarget(currentNumber++, targetLivingTime, prefabs[index], GetRandomPosition());
@@ -161,7 +187,7 @@ public class GameBuilder : MonoBehaviour
         float toNormal = 5f;
         float toHard = 20f;
 
-        if(State == GameState.Stop)
+        if(State == GameState.Stop || State == GameState.Clear)
         {
             return;
         }
@@ -184,6 +210,13 @@ public class GameBuilder : MonoBehaviour
         }
 
     }
+
+    private void GameClear()
+    {
+        State = GameState.Clear;
+        onGameClear?.Invoke();
+    }
+
 
     private void onAnyTargetSuccess(Target target)
     {
@@ -214,4 +247,6 @@ public class GameBuilder : MonoBehaviour
     private Vector2 GetRandomPosition() => Managers.Vector.GetRandomPositionInViewPort();
 
     public int MaxFailureCount => maxFailureCount;
+    public int CurrentNumber => currentNumber;
+    public bool CanOver => canOver;
 }

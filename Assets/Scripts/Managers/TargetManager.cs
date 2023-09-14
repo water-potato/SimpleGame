@@ -28,7 +28,6 @@ public class TargetManager
     private void Target_OnAnyTargetSuccess(Target target)
     {
         activeTargets.Remove(target);
-        Debug.Log("Success!");
     }
 
     public IReadOnlyList<Target> ActiveTargets { get { return activeTargets; } }

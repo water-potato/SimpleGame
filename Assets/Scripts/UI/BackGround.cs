@@ -31,7 +31,7 @@ public class BackGround : MonoBehaviour
     private void ChangeColor()
     {
         spriteRenderer.color = Color.Lerp(startColor, endColor, Mathf.Min(t, 1f));
-        if(t > 1f)
+        if(t > 1f && GameBuilder.Instance.CanOver)
         {
             GameBuilder.Instance.GameOver();
         }
@@ -45,7 +45,7 @@ public class BackGround : MonoBehaviour
 
     public void OnSuccess()
     {
-        float recoveryRate = .2f;
+        float recoveryRate = .1f;
         t = Mathf.Max(t - unitValue * recoveryRate, 0);
         ChangeColor();
     }
@@ -53,5 +53,10 @@ public class BackGround : MonoBehaviour
     public void ResetColor()
     {
         spriteRenderer.color = startColor;
+    }
+
+    public void EndColor()
+    {
+        spriteRenderer.color = endColor;
     }
 }

@@ -4,22 +4,29 @@ using UnityEngine;
 
 public class InputManager 
 {
-    private float sensitive = .3f; 
+    private float sensitive = .5f; 
 
-    public bool CheckTargetForMobile(out Target target)
+    public bool CheckTargetForMobile(out List<Target> targets)
     {
-        target = null;
+        targets = new List<Target>();
 
         if (Input.touchCount == 0)
             return false;
 
         // touch 모두 가져와서 루프 돌리기
-        Vector2 touchPoint = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-        if (Physics2D.OverlapCircle(touchPoint, sensitive)
-            .TryGetComponent<Target>(out target))
+        foreach (var touch in Input.touches)
         {
-            return true;
+            Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+
+            if (Physics2D.OverlapCircle(touchPosition, sensitive)
+                .TryGetComponent<Target>(out Target target))
+            {
+                targets.Add(target);
+            }
         }
+
+        if(targets.Count > 0)
+            return true;
 
         return false;
     }
